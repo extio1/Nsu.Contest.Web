@@ -1,0 +1,6 @@
+@Nsu.Contest.Web.HRDirector_HostAddress = http://localhost:5223
+
+GET {{Nsu.Contest.Web.HRDirector_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

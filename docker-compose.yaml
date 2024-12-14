@@ -1,0 +1,96 @@
+version: "3.9"
+
+services:
+  hrmanager: 
+    build: Nsu.Contest.Web.HRManager/
+    command: dotnet run
+    networks:
+      - employees-hrmanager-network
+
+  # hrdirector: 
+  #   build: Nsu.Contest.Web.HRDirector/
+  #   command: dotnet run
+
+  employee:
+    build: Nsu.Contest.Web.Employee/
+    command: dotnet run
+    networks:
+      - employees-hrmanager-network
+
+  junior-1:
+    extends:
+      service: employee
+    environment:
+        ID: 1
+        TYPE: junior
+
+  junior-2:
+    extends:
+      service: employee
+    environment:
+        ID: 2
+        TYPE: junior
+
+  # junior-3:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 3
+  #       TYPE: junior
+
+  # junior-4:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 4
+  #       TYPE: junior
+
+  # junior-5:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 5
+        # TYPE: junior
+
+  teamlead-1:
+    extends:
+      service: employee
+    environment:
+        ID: 1
+        TYPE: teamlead
+
+  teamlead-2:
+    extends:
+      service: employee
+    environment:
+        ID: 2
+        TYPE: teamlead
+
+  # teamlead-3:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 3
+  #       TYPE: teamlead
+
+  # teamlead-4:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 4
+  #       TYPE: teamlead
+
+  # teamlead-5:
+  #   extends:
+  #     service: employee
+  #   environment:
+  #       ID: 5
+        # TYPE: teamlead
+
+networks: 
+  # Как ограничить сетевое взаимодействие таким образом, 
+  # чтобы каждый employee мог общаться только с hrmanager, 
+  # а контейнеры employee не могли взаимодействовать между собой?
+  # Можно настроить отдельные сети для каждого employee и hrmanager, а красивее можно?
+  employees-hrmanager-network:
+    driver: bridge
