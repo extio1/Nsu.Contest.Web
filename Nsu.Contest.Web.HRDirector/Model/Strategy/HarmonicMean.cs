@@ -1,6 +1,4 @@
-using Nsu.Contest.Director;
-
-namespace Nsu.Contest.Director;
+namespace Nsu.Contest.Web.HRDirector.Model.Strategy;
 
 public class HarmonicMean : ITeamEstimatingStrategy
 {
@@ -17,10 +15,6 @@ public class HarmonicMean : ITeamEstimatingStrategy
             Console.WriteLine(c);
             c++;
         }
-
-
-        // Console.WriteLine(inputSequence.Count());
-        // Console.WriteLine(sumReciprocals);
 
         return inputSequence.Count() / sumReciprocals;
     }

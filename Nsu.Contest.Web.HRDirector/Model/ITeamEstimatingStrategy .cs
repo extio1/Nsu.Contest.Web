@@ -1,4 +1,4 @@
-namespace Nsu.Contest.Director;
+namespace Nsu.Contest.Web.HRDirector.Model;
 
 public interface ITeamEstimatingStrategy 
 {

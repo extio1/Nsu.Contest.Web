@@ -1,4 +1,4 @@
-namespace Nsu.Contest.Entity.EntityConfiguration;
+namespace Nsu.Contest.Web.Common.Entity.EntityConfiguration;
 
 using Nsu.Contest.Web.Common.Entity;
 using Microsoft.EntityFrameworkCore;

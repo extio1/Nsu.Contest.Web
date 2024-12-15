@@ -3,7 +3,6 @@ namespace Nsu.Contest.Web.HRManager.Model.Teambuilding.Strategy;
 using Nsu.Contest.Web.Common.Util;
 using Nsu.Contest.Web.Common.Entity;
 using Nsu.Contest.Web.HRManager.Model.Teambuilding;
-using Microsoft.Extensions.Options;
 
 public sealed class RandomTeamBuildingStrategy : ITeamBuildingStrategy
 {

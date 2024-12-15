@@ -29,29 +29,25 @@ public class EmployeeService
         try 
         {
             EmployeeReader employeeReader = new();
-            Employee employee;
-            IEnumerable<Employee> opponentEmployees;
-
             if(_config.Value.EmployeeType == "junior")
             {
-                employee = employeeReader.GetEmployeeById<Junior>(_config.Value.JuniorFilePath, _config.Value.EmployeeId);
-                opponentEmployees = employeeReader.ReadEmployees<Teamlead>(_config.Value.TeamleadFilePath);
+                Junior employee = employeeReader.GetEmployeeById<Junior>(_config.Value.JuniorFilePath, _config.Value.EmployeeId);
+                IEnumerable<Employee> opponentEmployees = employeeReader.ReadEmployees<Teamlead>(_config.Value.TeamleadFilePath);
+                var wishlist = WishlistGenerator.GenerateWishlist(employee, opponentEmployees);
+                await _hrManagerClient.SubmitDataAsync(new HRRequestJunior(employee, wishlist));
             } 
             else if (_config.Value.EmployeeType == "teamlead")
             {
-                employee = employeeReader.GetEmployeeById<Teamlead>(_config.Value.TeamleadFilePath, _config.Value.EmployeeId);
-                opponentEmployees = employeeReader.ReadEmployees<Junior>(_config.Value.JuniorFilePath);
+                Teamlead employee = employeeReader.GetEmployeeById<Teamlead>(_config.Value.TeamleadFilePath, _config.Value.EmployeeId);
+                IEnumerable<Employee> opponentEmployees = employeeReader.ReadEmployees<Junior>(_config.Value.JuniorFilePath);
+                var wishlist = WishlistGenerator.GenerateWishlist(employee, opponentEmployees);
+                await _hrManagerClient.SubmitDataAsync(new HRRequestTeamlead(employee, wishlist));
             }
             else
             {
                 throw new ArgumentException("Invalid employee type");
             }
             
-            var wishlist = WishlistGenerator.GenerateWishlist(employee, opponentEmployees);
-
-            var request = new HRRequest(employee, wishlist);
-
-            await _hrManagerClient.SubmitDataAsync(request);
         } catch (Exception e) {
             Console.WriteLine(e.Message);
         }

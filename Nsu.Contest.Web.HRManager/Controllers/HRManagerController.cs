@@ -5,7 +5,8 @@ using Nsu.Contest.Web.HRManager.Services;
 
 using Microsoft.AspNetCore.Mvc;
 
-public record HRRequest(Employee Employee, Wishlist Wishlist);
+public record HRRequestTeamlead(Teamlead Employee, Wishlist Wishlist);
+public record HRRequestJunior(Junior Employee, Wishlist Wishlist);
 
 [ApiController]
 [Route("api")]
@@ -18,17 +19,20 @@ public class HRManagerController : ControllerBase
         _service = service;
     }
 
-    [HttpPost("submit")]
-    public async Task<IActionResult> AddEmployee([FromBody] HRRequest request)
+    [HttpPost("teamlead/submit")]
+    public async Task<IActionResult> SubmitTeamlead([FromBody] HRRequestTeamlead request)
     {
-        await _service.SaveEmployeeAsync(employee);
+        await _service.SaveEmployeeWishlistAsync(request.Employee, request.Wishlist);
+        await _service.MakeTeamsAndSendAsync();
         return Ok("Employee data saved.");
     }
 
-    [HttpPost("test")]
-    public async Task<IActionResult> Test()
+    [HttpPost("junior/submit")]
+    public async Task<IActionResult> SubmitJunior([FromBody] HRRequestJunior request)
     {
-        Console.WriteLine("Its alive, its working!");
-        return Ok("Its working.");
+        await _service.SaveEmployeeWishlistAsync(request.Employee, request.Wishlist);
+        await _service.MakeTeamsAndSendAsync();
+        return Ok("Employee data saved.");
     }
+
 }

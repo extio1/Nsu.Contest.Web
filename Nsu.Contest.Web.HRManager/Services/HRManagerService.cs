@@ -1,49 +1,76 @@
 namespace Nsu.Contest.Web.HRManager.Services;
 
+using Nsu.Contest.Web.HRManager.Model.Data;
+using Nsu.Contest.Web.Common.Entity;
+using Nsu.Contest.Web.HRManager.Model.Teambuilding;
+using Microsoft.Extensions.Options;
+using Nsu.Contest.Web.HRManager.Model.Config;
+
 public class HRManagerService
     {
-        // private readonly HRManagerDbContext _context;
+        private readonly HRManagerDbContext _context;
+        private readonly Manager _manager;
+        private readonly IOptions<HRManagerConfig> _config;
 
-        // public HRManagerService(HRManagerDbContext context)
-        // {
-        //     _context = context;
-        // }
+        public HRManagerService(HRManagerDbContext context, Manager manager, IOptions<HRManagerConfig> config)
+        {
+            _context = context;
+            _manager = manager;
+            _config = config;
+        }
 
-        public HRManagerService(){}
+        public async Task SaveWishlistAsync(Wishlist wishlist)
+        {
+            if (!_context.Wishlists.Any(w => w.Id == wishlist.Id))
+            {
+                _context.Wishlists.Add(wishlist);
+                await _context.SaveChangesAsync();
+            }
+        }
 
-        // // Сохраняем информацию о сотруднике
-        // public async Task SaveEmployeeAsync(Employee employee)
-        // {
-        //     if (!_context.Employees.Any(e => e.Id == employee.Id))
-        //     {
-        //         _context.Employees.Add(employee);
-        //         await _context.SaveChangesAsync();
-        //     }
-        // }
+        public async Task SaveTeamleadWishlistAsync(Teamlead teamlead, Wishlist wishlist)
+        {
+            if (!_context.Teamleads.Any(t => t.Id == teamlead.Id))
+            {
+                _context.Teamleads.Add(teamlead);
+                await SaveWishlistAsync(wishlist);
+            }
+        }
 
-        // // Формируем команды
-        // public async Task<List<Team>> CreateTeamsAsync()
-        // {
-        //     var juniors = _context.Employees.Where(e => e.Type == "junior").ToList();
-        //     var teamLeads = _context.Employees.Where(e => e.Type == "teamlead").ToList();
+        public async Task SaveJuniorWishlistAsync(Junior junior, Wishlist wishlist)
+        {
+            if (!_context.Juniors.Any(j => j.Id == junior.Id))
+            {
+                _context.Juniors.Add(junior);
+                await SaveWishlistAsync(wishlist);
+            }
+        }
 
-        //     var teams = new List<Team>();
+        public async Task CreateTeamsAndSendAsync()
+        {
+            var teamleads = _context.Teamleads.ToList();
+            var juniors = _context.Juniors.ToList();
+            var wishlistTeamleads = _context.Wishlists
+                .Where(w => teamleads.Contains(w.ForEmployee))
+                .ToList();
+            var wishlistJuniors = _context.Wishlists
+                .Where(w => juniors.Contains(w.ForEmployee))
+                .ToList();
 
-        //     foreach (var junior in juniors)
-        //     {
-        //         var preferredTeamLeadId = junior.Wishlist.FirstOrDefault(tl => teamLeads.Any(t => t.Id == tl));
-        //         var teamLead = teamLeads.FirstOrDefault(tl => tl.Id == preferredTeamLeadId);
+            if( teamleads.Count         == _config.Value.NumberOfTeams &&
+                juniors.Count           == _config.Value.NumberOfTeams &&
+                wishlistTeamleads.Count == _config.Value.NumberOfTeams &&
+                wishlistJuniors.Count   == _config.Value.NumberOfTeams ) 
+            {
+                var teams = _manager.BuildTeams(teamleads, juniors, wishlistTeamleads, wishlistJuniors);
+                
+                foreach (var item in teams)
+                {
+                    Console.WriteLine($"{item.Junior.Id}, {item.Teamlead.Id}");
+                }
 
-        //         if (teamLead != null)
-        //         {
-        //             teams.Add(new Team { Junior = junior, TeamLead = teamLead });
-        //             teamLeads.Remove(teamLead); // Убираем teamlead, чтобы он был в одной команде
-        //         }
-        //     }
+                await _context.SaveChangesAsync();
+            }
+        }
 
-        //     _context.Teams.AddRange(teams);
-        //     await _context.SaveChangesAsync();
-
-        //     return teams;
-        // }
     }

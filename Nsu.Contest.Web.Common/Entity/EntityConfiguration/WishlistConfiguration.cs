@@ -1,10 +1,10 @@
-namespace Nsu.Contest.Entity.EntityConfiguration;
+namespace Nsu.Contest.Web.Common.Entity.EntityConfiguration;
 
 using Nsu.Contest.Web.Common.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal class WishlistConfiguration : IEntityTypeConfiguration<Wishlist>
+public class WishlistConfiguration : IEntityTypeConfiguration<Wishlist>
 {
     public void Configure(EntityTypeBuilder<Wishlist> builder)
     {

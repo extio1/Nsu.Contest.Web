@@ -1,10 +1,11 @@
-namespace Nsu.Contest.Entity.EntityConfiguration;
+namespace Nsu.Contest.Web.Common.Entity.EntityConfiguration;
 
 using Nsu.Contest.Web.Common.Entity;
+
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal class TeamConfiguration: IEntityTypeConfiguration<Team>
+public class TeamConfiguration: IEntityTypeConfiguration<Team>
 {
     public void Configure(EntityTypeBuilder<Team> builder)
     {

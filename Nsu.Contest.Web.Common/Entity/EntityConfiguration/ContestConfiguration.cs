@@ -1,10 +1,10 @@
-namespace Nsu.Contest.Entity.EntityConfiguration;
+namespace Nsu.Contest.Web.Common.Entity.EntityConfiguration;
 
 using Nsu.Contest.Web.Common.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-internal class ContestConfiguration : IEntityTypeConfiguration<Contest>
+public class ContestConfiguration : IEntityTypeConfiguration<Contest>
 {
     public void Configure(EntityTypeBuilder<Contest> builder)
     {

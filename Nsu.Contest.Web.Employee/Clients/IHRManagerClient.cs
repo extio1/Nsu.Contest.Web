@@ -6,6 +6,9 @@ using Refit;
 
 public interface IHRManagerClient
 {
-    [Post("/api/submit")]
-    Task SubmitDataAsync([Body] HRRequest request);
+    [Post("/api/teamlead/submit")]
+    Task SubmitDataAsync([Body] HRRequestTeamlead request);
+
+    [Post("/api/junior/submit")]
+    Task SubmitDataAsync([Body] HRRequestJunior request);
 }
