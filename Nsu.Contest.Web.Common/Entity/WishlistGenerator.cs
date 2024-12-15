@@ -33,7 +33,7 @@ public class WishlistGenerator : IWishlistGenerator
         return wishlists;
     }
 
-    public Wishlist GenerateWishlist(Employee forEmpl, IEnumerable<Employee> ofEmpls)
+    public static Wishlist GenerateWishlist(Employee forEmpl, IEnumerable<Employee> ofEmpls)
     {
         var prioritiesForEmpl = RandomGenerator.GeneratePermutation(ofEmpls.Count());
         return new Wishlist(forEmpl, prioritiesForEmpl);

@@ -2,33 +2,58 @@ namespace Nsu.Contest.Web.Employee.Services;
 
 using Nsu.Contest.Web.Common.Entity;
 using Nsu.Contest.Web.Employee.Clients;
+using Nsu.Contest.Web.HRManager.Controllers;
+using Nsu.Contest.Web.Common.Util;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public class EmployeeService
 {
     private readonly IHRManagerClient _hrManagerClient;
     private readonly ILogger<EmployeeService> _logger;
+    private readonly IOptions<EmployeeConfig> _config;
 
     public EmployeeService(
-        IHRManagerClient hrManagerClient, ILogger<EmployeeService> logger)
+        IHRManagerClient hrManagerClient, ILogger<EmployeeService> logger, IOptions<EmployeeConfig> options)
     {
         _hrManagerClient = hrManagerClient;
+        _config = options;
         _logger = logger;
     }
 
     public async Task SendPreferencesAsync()
     {
-        // var employeeId = int.Parse(Environment.GetEnvironmentVariable("ID") ?? throw new InvalidOperationException("ID not specified"));
-        // var employeeType = Environment.GetEnvironmentVariable("TYPE") ?? throw new InvalidOperationException("TYPE not specified");
-        
-        // var wishlist = _wishlistGenerator.GenerateWishlist(employeeId, allEmployeeIds);
+        try 
+        {
+            EmployeeReader employeeReader = new();
+            Employee employee;
+            IEnumerable<Employee> opponentEmployees;
 
-        var request = new HRRequest(new Teamlead(1, "Jorge"), new Wishlist(new Teamlead(1, "Jorge"), [1, 2, 3]));
+            if(_config.Value.EmployeeType == "junior")
+            {
+                employee = employeeReader.GetEmployeeById<Junior>(_config.Value.JuniorFilePath, _config.Value.EmployeeId);
+                opponentEmployees = employeeReader.ReadEmployees<Teamlead>(_config.Value.TeamleadFilePath);
+            } 
+            else if (_config.Value.EmployeeType == "teamlead")
+            {
+                employee = employeeReader.GetEmployeeById<Teamlead>(_config.Value.TeamleadFilePath, _config.Value.EmployeeId);
+                opponentEmployees = employeeReader.ReadEmployees<Junior>(_config.Value.JuniorFilePath);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid employee type");
+            }
+            
+            var wishlist = WishlistGenerator.GenerateWishlist(employee, opponentEmployees);
 
-        await _hrManagerClient.SubmitDataAsync(request);
+            var request = new HRRequest(employee, wishlist);
+
+            await _hrManagerClient.SubmitDataAsync(request);
+        } catch (Exception e) {
+            Console.WriteLine(e.Message);
+        }
     }
 }

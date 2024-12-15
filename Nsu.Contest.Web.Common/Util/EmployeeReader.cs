@@ -25,5 +25,11 @@ public class EmployeeReader
 
         return employees;
     }
+
+    public T GetEmployeeById<T>(string path, int id) where T : Employee
+    {
+        var employees = ReadEmployees<T>(path);
+        return employees.First(e => e.Id == id);
+    }
 }
 

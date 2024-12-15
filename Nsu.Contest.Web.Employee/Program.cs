@@ -1,13 +1,16 @@
-using Nsu.Contest.Web.Common.Entity;
 using Nsu.Contest.Web.Employee.Services;
 using Nsu.Contest.Web.Employee.Clients;
 
-using Microsoft.Extensions.DependencyInjection;
 using Refit;
-using System;
-using System.Threading.Tasks;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<EmployeeConfig>(
+    builder.Configuration.GetSection("EmployeeServiceOptions"));
+
+// Добавляем переменные окружения
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddRefitClient<IHRManagerClient>().ConfigureHttpClient(c => c.BaseAddress = new Uri("http://hrmanager"));
 builder.Services.AddScoped<EmployeeService>();

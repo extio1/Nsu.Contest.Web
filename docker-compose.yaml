@@ -2,18 +2,26 @@ version: "3.9"
 
 services:
   hrmanager: 
-    build: Nsu.Contest.Web.HRManager/
+    build:
+      context: .
+      dockerfile: Nsu.Contest.Web.HRManager/Dockerfile
     command: dotnet run
     networks:
       - employees-hrmanager-network
+    ports:
+      - "5000:80"
 
   # hrdirector: 
   #   build: Nsu.Contest.Web.HRDirector/
   #   command: dotnet run
 
   employee:
-    build: Nsu.Contest.Web.Employee/
+    build:
+      context: .
+      dockerfile: Nsu.Contest.Web.Employee/Dockerfile
     command: dotnet run
+    depends_on:
+      - hrmanager
     networks:
       - employees-hrmanager-network
 
@@ -21,71 +29,71 @@ services:
     extends:
       service: employee
     environment:
-        ID: 1
-        TYPE: junior
+        EmployeeServiceOptions__EmployeeId: 1
+        EmployeeServiceOptions__EmployeeType: junior
 
   junior-2:
     extends:
       service: employee
     environment:
-        ID: 2
-        TYPE: junior
+        EmployeeServiceOptions__EmployeeId: 2
+        EmployeeServiceOptions__EmployeeType: junior
 
   # junior-3:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 3
-  #       TYPE: junior
+  #       EmployeeServiceOptions__EmployeeId: 3
+  #       EmployeeServiceOptions__EmployeeType: junior
 
   # junior-4:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 4
-  #       TYPE: junior
+  #       EmployeeServiceOptions__EmployeeId: 4
+  #       EmployeeServiceOptions__EmployeeType: junior
 
   # junior-5:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 5
-        # TYPE: junior
+  #       EmployeeServiceOptions__EmployeeId: 5
+        # EmployeeServiceOptions__EmployeeType: junior
 
   teamlead-1:
     extends:
       service: employee
     environment:
-        ID: 1
-        TYPE: teamlead
+        EmployeeServiceOptions__EmployeeId: 1
+        EmployeeServiceOptions__EmployeeType: teamlead
 
   teamlead-2:
     extends:
       service: employee
     environment:
-        ID: 2
-        TYPE: teamlead
+        EmployeeServiceOptions__EmployeeId: 2
+        EmployeeServiceOptions__EmployeeType: teamlead
 
   # teamlead-3:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 3
-  #       TYPE: teamlead
+  #       EmployeeServiceOptions__EmployeeId: 3
+  #       EmployeeServiceOptions__EmployeeType: teamlead
 
   # teamlead-4:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 4
-  #       TYPE: teamlead
+  #       EmployeeServiceOptions__EmployeeId: 4
+  #       EmployeeServiceOptions__EmployeeType: teamlead
 
   # teamlead-5:
   #   extends:
   #     service: employee
   #   environment:
-  #       ID: 5
-        # TYPE: teamlead
+  #       EmployeeServiceOptions__EmployeeId: 5
+        # EmployeeServiceOptions__EmployeeType: teamlead
 
 networks: 
   # Как ограничить сетевое взаимодействие таким образом, 
@@ -93,4 +101,4 @@ networks:
   # а контейнеры employee не могли взаимодействовать между собой?
   # Можно настроить отдельные сети для каждого employee и hrmanager, а красивее можно?
   employees-hrmanager-network:
-    driver: bridge
+    driver: brEmployeeServiceOptions__EmployeeIdge
