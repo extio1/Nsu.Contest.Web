@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nsu.Contest.Web.Employee", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nsu.Contest.Web.Common", "Nsu.Contest.Web.Common\Nsu.Contest.Web.Common.csproj", "{F5A5F5BD-4B1B-47BB-8C8F-0CDB8A09D7E2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nsu.Contest.Web.Database", "Nsu.Contest.Web.Database\Nsu.Contest.Web.Database.csproj", "{B8894C3D-62C3-4565-A638-8F4A529A90AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{F5A5F5BD-4B1B-47BB-8C8F-0CDB8A09D7E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5A5F5BD-4B1B-47BB-8C8F-0CDB8A09D7E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5A5F5BD-4B1B-47BB-8C8F-0CDB8A09D7E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8894C3D-62C3-4565-A638-8F4A529A90AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8894C3D-62C3-4565-A638-8F4A529A90AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8894C3D-62C3-4565-A638-8F4A529A90AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8894C3D-62C3-4565-A638-8F4A529A90AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

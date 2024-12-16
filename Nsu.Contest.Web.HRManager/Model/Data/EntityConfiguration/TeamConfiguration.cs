@@ -1,4 +1,4 @@
-namespace Nsu.Contest.Web.Common.Entity.EntityConfiguration;
+namespace Nsu.Contest.Web.HRManager.Model.Data.EntityConfiguration;
 
 using Nsu.Contest.Web.Common.Entity;
 

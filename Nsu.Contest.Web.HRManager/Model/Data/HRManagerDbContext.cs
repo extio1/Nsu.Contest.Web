@@ -1,7 +1,7 @@
 namespace Nsu.Contest.Web.HRManager.Model.Data;
 
 using Nsu.Contest.Web.Common.Entity; 
-using Nsu.Contest.Web.Common.Entity.EntityConfiguration;
+using Nsu.Contest.Web.HRManager.Model.Data.EntityConfiguration;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +16,7 @@ public class HRManagerDbContext : DbContext
     public HRManagerDbContext(DbContextOptions<HRManagerDbContext> options) : base(options) {}
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(ContestDbContext).Assembly);
-        modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(HRManagerDbContext).Assembly);
+        // modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
     }
 }
