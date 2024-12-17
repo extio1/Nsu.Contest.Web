@@ -19,31 +19,42 @@ public class HRManagerService
             _config = config;
         }
 
-        public async Task SaveWishlistAsync(Wishlist wishlist)
+        private void SaveWishlist(Wishlist wishlist)
         {
             if (!_context.Wishlists.Any(w => w.Id == wishlist.Id))
             {
                 _context.Wishlists.Add(wishlist);
-                await _context.SaveChangesAsync();
             }
         }
 
-        public async Task SaveTeamleadWishlistAsync(Teamlead teamlead, Wishlist wishlist)
+        private void SaveTeamlead(Teamlead teamlead)
         {
             if (!_context.Teamleads.Any(t => t.Id == teamlead.Id))
             {
                 _context.Teamleads.Add(teamlead);
-                await SaveWishlistAsync(wishlist);
             }
         }
 
-        public async Task SaveJuniorWishlistAsync(Junior junior, Wishlist wishlist)
+        private void SaveJunior(Junior junior)
         {
             if (!_context.Juniors.Any(j => j.Id == junior.Id))
             {
                 _context.Juniors.Add(junior);
-                await SaveWishlistAsync(wishlist);
             }
+        }
+
+        public async Task HandleTeamleadWishlistAsync(Teamlead teamlead, Wishlist wishlist)
+        {
+            SaveTeamlead(teamlead);
+            SaveWishlist(wishlist);
+            await CreateTeamsAndSendAsync();
+        }
+
+        public async Task HandleJuniorWishlistAsync(Junior junior, Wishlist wishlist)
+        {
+            SaveJunior(junior);
+            SaveWishlist(wishlist);
+            await CreateTeamsAndSendAsync();
         }
 
         public async Task CreateTeamsAndSendAsync()

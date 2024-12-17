@@ -31,6 +31,30 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<HRManagerDbContext>();
+    try
+    {
+        var pendingMigrations = dbContext.Database.GetPendingMigrations();
+
+        if (pendingMigrations.Any())
+        {
+            Console.WriteLine("Applying pending database migrations...");
+            dbContext.Database.Migrate();
+            Console.WriteLine("Database migrations applied successfully.");
+        }
+        else
+        {
+            Console.WriteLine("No pending migrations. Database is up-to-date.");
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"An error occurred while checking or applying migrations: {ex.Message}");
+    }
+}
+
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();

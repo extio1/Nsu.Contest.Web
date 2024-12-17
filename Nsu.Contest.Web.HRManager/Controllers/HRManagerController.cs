@@ -12,9 +12,9 @@ public record HRRequestJunior(Junior Employee, Wishlist Wishlist);
 [Route("api")]
 public class HRManagerController : ControllerBase
 {
-    private readonly HRManagerService _service;
+    private readonly IHRManagerService _service;
 
-    public HRManagerController(HRManagerService service)
+    public HRManagerController(IHRManagerService service)
     {
         _service = service;
     }
@@ -22,16 +22,14 @@ public class HRManagerController : ControllerBase
     [HttpPost("teamlead/submit")]
     public async Task<IActionResult> SubmitTeamlead([FromBody] HRRequestTeamlead request)
     {
-        await _service.SaveEmployeeWishlistAsync(request.Employee, request.Wishlist);
-        await _service.MakeTeamsAndSendAsync();
+        await _service.HandleTeamleadWishlistAsync(request.Employee, request.Wishlist);
         return Ok("Employee data saved.");
     }
 
     [HttpPost("junior/submit")]
     public async Task<IActionResult> SubmitJunior([FromBody] HRRequestJunior request)
     {
-        await _service.SaveEmployeeWishlistAsync(request.Employee, request.Wishlist);
-        await _service.MakeTeamsAndSendAsync();
+        await _service.HandleJuniorWishlistAsync(request.Employee, request.Wishlist);
         return Ok("Employee data saved.");
     }
 
