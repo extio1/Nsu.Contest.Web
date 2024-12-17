@@ -9,10 +9,9 @@ COPY . .
 WORKDIR "/src/Nsu.Contest.Web.HRManager"
 RUN dotnet publish "Nsu.Contest.Web.HRManager.csproj" -c Release -o /app/publish
 
-
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 EXPOSE 80
 WORKDIR /app
 COPY --from=build /app/publish .
 
-ENTRYPOINT ["dotnet", "Nsu.Contest.Web.HRManager.dll"]
+ENTRYPOINT ["dotnet", "run", "--project", "/srs/Nsu.Contest.Web.HRManager"]

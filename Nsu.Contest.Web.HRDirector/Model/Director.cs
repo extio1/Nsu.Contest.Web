@@ -2,13 +2,9 @@ namespace Nsu.Contest.Web.HRDirector.Model;
 
 using Nsu.Contest.Web.Common.Entity;
 
-public class Director
+public class Director(ITeamEstimatingStrategy estimatingStrategy)
 {
-    ITeamEstimatingStrategy _estimatingStrategy;
-    public Director(ITeamEstimatingStrategy estimatingStrategy) 
-    {
-        _estimatingStrategy = estimatingStrategy;
-    }
+    readonly ITeamEstimatingStrategy _estimatingStrategy = estimatingStrategy;
 
     /// <summary>
     /// Calculate mean harmonic of teams distribution

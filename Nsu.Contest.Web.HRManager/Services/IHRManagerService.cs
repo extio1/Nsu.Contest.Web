@@ -4,6 +4,6 @@ using Nsu.Contest.Web.Common.Entity;
 
 public interface IHRManagerService
 {
-    public Task HandleJuniorWishlistAsync(Junior junior, Wishlist wishlist);
-    public Task HandleTeamleadWishlistAsync(Teamlead teamlead, Wishlist wishlist);
+    public void HandleJuniorWishlist(Junior junior, Wishlist wishlist);
+    public void HandleTeamleadWishlist(Teamlead teamlead, Wishlist wishlist);
 }

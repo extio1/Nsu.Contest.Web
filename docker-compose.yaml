@@ -1,19 +1,80 @@
 version: "3.9"
 
 services:
+  postgres-hrmanager:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: hrmanager
+      POSTGRES_PASSWORD: hrmanager
+      POSTGRES_DB: hrmanager_db
+    networks:
+      - hrmanager-db-network
+    ports:
+      - "5001:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hrmanager -d hrmanager_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
   hrmanager: 
     build:
       context: .
       dockerfile: Nsu.Contest.Web.HRManager/Dockerfile
-    command: dotnet run
+    depends_on:
+      hrdirector:
+        condition: service_healthy
+      postgres-hrmanager:
+        condition: service_healthy
     networks:
       - employees-hrmanager-network
+      - hrmanger-hrdirector-network
+      - hrmanager-db-network
     ports:
       - "5000:80"
+    healthcheck:
+      test: "curl hrmanager:80"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
-  # hrdirector: 
-  #   build: Nsu.Contest.Web.HRDirector/
-  #   command: dotnet run
+  postgres-hrdirector:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: hrdirector
+      POSTGRES_PASSWORD: hrdirector
+      POSTGRES_DB: hrdirector_db
+    networks:
+      - hrdirector-db-network
+    ports:
+      - "6001:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hrdirector -d hrdirector_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  hrdirector: 
+    build:
+      context: .
+      dockerfile: Nsu.Contest.Web.HRManager/Dockerfile
+    depends_on:
+      postgres-hrdirector:
+        condition: service_healthy
+    networks:
+      - hrdirector-db-network
+      - hrmanger-hrdirector-network
+    ports:
+      - "6000:80"
+    healthcheck:
+      test: "curl hrdirector:80"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
   employee:
     build:
@@ -21,7 +82,8 @@ services:
       dockerfile: Nsu.Contest.Web.Employee/Dockerfile
     command: dotnet run
     depends_on:
-      - hrmanager
+      hrmanager:
+        condition: service_healthy
     networks:
       - employees-hrmanager-network
 
@@ -101,4 +163,11 @@ networks:
   # а контейнеры employee не могли взаимодействовать между собой?
   # Можно настроить отдельные сети для каждого employee и hrmanager, а красивее можно?
   employees-hrmanager-network:
-    driver: brEmployeeServiceOptions__EmployeeIdge
+    driver: bridge
+  hrmanager-db-network:
+    driver: bridge
+  hrmanger-hrdirector-network:
+    driver: bridge
+  hrdirector-db-network:
+    driver: bridge
+  

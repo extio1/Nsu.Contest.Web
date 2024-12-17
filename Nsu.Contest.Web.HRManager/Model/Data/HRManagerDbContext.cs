@@ -17,6 +17,5 @@ public class HRManagerDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(HRManagerDbContext).Assembly);
-        // modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
     }
 }

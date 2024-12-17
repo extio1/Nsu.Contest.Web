@@ -10,27 +10,26 @@ public record HRRequestJunior(Junior Employee, Wishlist Wishlist);
 
 [ApiController]
 [Route("api")]
-public class HRManagerController : ControllerBase
+public class HRManagerController(IHRManagerService service) : ControllerBase
 {
-    private readonly IHRManagerService _service;
-
-    public HRManagerController(IHRManagerService service)
-    {
-        _service = service;
-    }
+    private readonly IHRManagerService _service = service;
 
     [HttpPost("teamlead/submit")]
-    public async Task<IActionResult> SubmitTeamlead([FromBody] HRRequestTeamlead request)
+    public IActionResult SubmitTeamlead([FromBody] HRRequestTeamlead request)
     {
-        await _service.HandleTeamleadWishlistAsync(request.Employee, request.Wishlist);
-        return Ok("Employee data saved.");
+        var teamlead = new Teamlead(request.Employee.Id, request.Employee.Name);
+        var wishlist = new Wishlist(teamlead, request.Wishlist.DesiredEmployees);
+        _service.HandleTeamleadWishlist(teamlead, wishlist);
+        return Ok("Teamlead data saved.");
     }
 
     [HttpPost("junior/submit")]
-    public async Task<IActionResult> SubmitJunior([FromBody] HRRequestJunior request)
+    public IActionResult SubmitJunior([FromBody] HRRequestJunior request)
     {
-        await _service.HandleJuniorWishlistAsync(request.Employee, request.Wishlist);
-        return Ok("Employee data saved.");
+        var junior = new Junior(request.Employee.Id, request.Employee.Name);
+        var wishlist = new Wishlist(junior, request.Wishlist.DesiredEmployees);
+        _service.HandleJuniorWishlist(junior, wishlist);
+        return Ok("Junior data saved.");
     }
 
 }
