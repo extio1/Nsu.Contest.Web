@@ -13,7 +13,7 @@ public record HRDirectorRequest(
 
 [ApiController]
 [Route("api")]
-public class HRDirectorController(IHRDirectorService service)
+public class HRDirectorController(IHRDirectorService service) : ControllerBase
 {
     IHRDirectorService _service = service;
 

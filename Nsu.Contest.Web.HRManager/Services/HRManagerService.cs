@@ -5,19 +5,17 @@ using Nsu.Contest.Web.Common.Entity;
 using Nsu.Contest.Web.HRManager.Model.Teambuilding;
 using Microsoft.Extensions.Options;
 using Nsu.Contest.Web.HRManager.Model.Config;
+using Nsu.Contest.Web.HRManager.Clients;
+using Nsu.Contest.Web.HRDirector.Controllers;
 
-public class HRManagerService : IHRManagerService
+public class HRManagerService(
+    HRManagerDbContext context, Manager manager, IHRDirectorClient client,
+    IOptions<HRManagerConfig> config) : IHRManagerService
 {
-    private readonly HRManagerDbContext _context;
-    private readonly Manager _manager;
-    private readonly IOptions<HRManagerConfig> _config;
-
-    public HRManagerService(HRManagerDbContext context, Manager manager, IOptions<HRManagerConfig> config)
-    {
-        _context = context;
-        _manager = manager;
-        _config = config;
-    }
+    private readonly HRManagerDbContext _context = context;
+    private readonly Manager _manager = manager;
+    private readonly IOptions<HRManagerConfig> _config = config;
+    private readonly IHRDirectorClient _client = client;
 
     private void SaveWishlist(Wishlist wishlist)
     {
@@ -66,12 +64,7 @@ public class HRManagerService : IHRManagerService
             wishlistJuniors.Count   == _config.Value.NumberOfTeams ) 
         {
             var teams = _manager.BuildTeams(teamleads, juniors, wishlistTeamleads, wishlistJuniors);
-            
-            foreach (var item in teams)
-            {
-                Console.WriteLine($"{item.Junior.Id}, {item.Teamlead.Id}");
-            }
-
+            _client.SubmitData(new HRDirectorRequest(wishlistJuniors, wishlistTeamleads, teams));
         }
 
         _context.SaveChanges();

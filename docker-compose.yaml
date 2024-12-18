@@ -16,7 +16,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 60s
+
+  migration-hrmanager:
+    build:
+      context: .
+      dockerfile: Dockerfile.migration
+    entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRManager"]
+    depends_on:
+      postgres-hrmanager:
+        condition: service_healthy
+    networks:
+      - hrmanager-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRManager"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
 
   hrmanager: 
     build:
@@ -26,6 +43,8 @@ services:
       hrdirector:
         condition: service_healthy
       postgres-hrmanager:
+        condition: service_healthy
+      migration-hrmanager:
         condition: service_healthy
     networks:
       - employees-hrmanager-network
@@ -38,7 +57,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 60s
 
   postgres-hrdirector:
     image: postgres:15
@@ -55,7 +74,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 60s
+
+  migration-hrdirector:
+    build:
+      context: .
+      dockerfile: Dockerfile.migration
+    entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRDirector"]
+    depends_on:
+      postgres-hrdirector:
+        condition: service_healthy
+    networks:
+      - hrdirector-db-network
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRDirector"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
 
   hrdirector: 
     build:
@@ -63,6 +99,8 @@ services:
       dockerfile: Nsu.Contest.Web.HRManager/Dockerfile
     depends_on:
       postgres-hrdirector:
+        condition: service_healthy
+      migration-hrdirector:
         condition: service_healthy
     networks:
       - hrdirector-db-network
@@ -74,7 +112,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 60s
 
   employee:
     build:

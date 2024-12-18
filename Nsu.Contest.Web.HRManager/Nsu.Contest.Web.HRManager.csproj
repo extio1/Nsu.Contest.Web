@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nsu.Contest.Web.Common\Nsu.Contest.Web.Common.csproj" />
+    <ProjectReference Include="..\Nsu.Contest.Web.HRDirector\Nsu.Contest.Web.HRDirector.csproj" />
   </ItemGroup>
 </Project>

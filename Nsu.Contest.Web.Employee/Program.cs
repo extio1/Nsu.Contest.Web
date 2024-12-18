@@ -3,7 +3,6 @@ using Nsu.Contest.Web.Employee.Clients;
 
 using Refit;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<EmployeeConfig>(
