@@ -4,7 +4,7 @@ using Nsu.Contest.Web.HRDirector.Controllers;
 
 using Refit;
 
-public class IHRDirectorClient
+public interface IHRDirectorClient
 {
     [Post("/api/submit")]
     Task SubmitData([Body] HRDirectorRequest request);
