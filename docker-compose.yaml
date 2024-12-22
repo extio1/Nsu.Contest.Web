@@ -44,8 +44,8 @@ services:
         condition: service_healthy
       postgres-hrmanager:
         condition: service_healthy
-      migration-hrmanager:
-        condition: service_healthy
+      # migration-hrmanager:
+      #   condition: service_healthy
     networks:
       - employees-hrmanager-network
       - hrmanger-hrdirector-network
@@ -76,22 +76,22 @@ services:
       retries: 5
       start_period: 60s
 
-  migration-hrdirector:
-    build:
-      context: .
-      dockerfile: Dockerfile.migration
-    entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRDirector"]
-    depends_on:
-      postgres-hrdirector:
-        condition: service_healthy
-    networks:
-      - hrdirector-db-network
-    healthcheck:
-      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRDirector"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
+  # migration-hrdirector:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.migration
+  #   entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRDirector"]
+  #   depends_on:
+  #     postgres-hrdirector:
+  #       condition: service_healthy
+  #   networks:
+  #     - hrdirector-db-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRDirector"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #     start_period: 60s
 
   hrdirector: 
     build:
@@ -100,8 +100,8 @@ services:
     depends_on:
       postgres-hrdirector:
         condition: service_healthy
-      migration-hrdirector:
-        condition: service_healthy
+      # migration-hrdirector:
+      #   condition: service_healthy
     networks:
       - hrdirector-db-network
       - hrmanger-hrdirector-network
