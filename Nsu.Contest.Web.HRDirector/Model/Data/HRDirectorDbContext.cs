@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 public class HRDirectorDbContext : DbContext
 {
+    public DbSet<Employee> Employees { get; set; }
+    public DbSet<Wishlist> Wishlists { get; set; }
+    public DbSet<Team> Teams { get; set; }
     public DbSet<Contest> Contests { get; set; }
 
     public HRDirectorDbContext(DbContextOptions<HRDirectorDbContext> options) : base(options) {}

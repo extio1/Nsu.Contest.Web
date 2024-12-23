@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MassTransit;
+
 using Nsu.Contest.Web.HRDirector.Model.Data;
 using Nsu.Contest.Web.HRDirector.Model;
 using Nsu.Contest.Web.HRDirector.Model.Strategy;
@@ -19,9 +21,26 @@ builder.Services.AddScoped<ITeamEstimatingStrategy, HarmonicMean>();
 builder.Services.AddScoped<Director>();
 builder.Services.AddControllers();
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<HRDirectorTeamConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq://rabbitmq", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });   
+        
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 var app = builder.Build();
 
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

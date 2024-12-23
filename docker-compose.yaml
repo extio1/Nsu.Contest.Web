@@ -1,6 +1,23 @@
 version: "3.9"
 
 services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - contest_network
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 100
+
   postgres-hrmanager:
     image: postgres:15
     environment:
@@ -8,7 +25,7 @@ services:
       POSTGRES_PASSWORD: hrmanager
       POSTGRES_DB: hrmanager_db
     networks:
-      - hrmanager-db-network
+      - contest_network
     ports:
       - "5001:5432"
     healthcheck:
@@ -27,7 +44,7 @@ services:
       postgres-hrmanager:
         condition: service_healthy
     networks:
-      - hrmanager-db-network
+      - contest_network
     healthcheck:
       test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRManager"]
       interval: 10s
@@ -44,12 +61,12 @@ services:
         condition: service_healthy
       postgres-hrmanager:
         condition: service_healthy
-      # migration-hrmanager:
-      #   condition: service_healthy
+      migration-hrmanager:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
-      - employees-hrmanager-network
-      - hrmanger-hrdirector-network
-      - hrmanager-db-network
+      - contest_network
     ports:
       - "5000:80"
     healthcheck:
@@ -66,7 +83,7 @@ services:
       POSTGRES_PASSWORD: hrdirector
       POSTGRES_DB: hrdirector_db
     networks:
-      - hrdirector-db-network
+      - contest_network
     ports:
       - "6001:5432"
     healthcheck:
@@ -76,22 +93,22 @@ services:
       retries: 5
       start_period: 60s
 
-  # migration-hrdirector:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.migration
-  #   entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRDirector"]
-  #   depends_on:
-  #     postgres-hrdirector:
-  #       condition: service_healthy
-  #   networks:
-  #     - hrdirector-db-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRDirector"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 60s
+  migration-hrdirector:
+    build:
+      context: .
+      dockerfile: Dockerfile.migration
+    entrypoint: ["/usr/local/bin/migrate.sh", "Nsu.Contest.Web.HRDirector"]
+    depends_on:
+      postgres-hrdirector:
+        condition: service_healthy
+    networks:
+      - contest_network
+    healthcheck:
+      test: ["CMD-SHELL", "/usr/local/bin/healthcheck.sh Nsu.Contest.Web.HRDirector"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
 
   hrdirector: 
     build:
@@ -100,11 +117,12 @@ services:
     depends_on:
       postgres-hrdirector:
         condition: service_healthy
-      # migration-hrdirector:
-      #   condition: service_healthy
+      migration-hrdirector:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
-      - hrdirector-db-network
-      - hrmanger-hrdirector-network
+      - contest_network
     ports:
       - "6000:80"
     healthcheck:
@@ -122,8 +140,10 @@ services:
     depends_on:
       hrmanager:
         condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
-      - employees-hrmanager-network
+      - contest_network
 
   junior-1:
     extends:
@@ -196,16 +216,7 @@ services:
         EmployeeServiceOptions__EmployeeType: teamlead
 
 networks: 
-  # Как ограничить сетевое взаимодействие таким образом, 
-  # чтобы каждый employee мог общаться только с hrmanager, 
-  # а контейнеры employee не могли взаимодействовать между собой?
-  # Можно настроить отдельные сети для каждого employee и hrmanager, а красивее можно?
-  employees-hrmanager-network:
-    driver: bridge
-  hrmanager-db-network:
-    driver: bridge
-  hrmanger-hrdirector-network:
-    driver: bridge
-  hrdirector-db-network:
+  networks:
+  contest_network:
     driver: bridge
   
