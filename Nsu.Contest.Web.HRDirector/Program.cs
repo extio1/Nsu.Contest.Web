@@ -32,13 +32,16 @@ builder.Services.AddMassTransit(x =>
 
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq://rabbitmq", h =>
+        cfg.Host("rabbitmq://localhost", h =>
         {
             h.Username("guest");
             h.Password("guest");
-        });   
-        
-        cfg.ConfigureEndpoints(context);
+        });
+
+        cfg.ReceiveEndpoint("director-wishlist-queue", e =>
+        {
+            e.ConfigureConsumer<HRDirectorWishlistConsumer>(context);
+        });
     });
 });
 

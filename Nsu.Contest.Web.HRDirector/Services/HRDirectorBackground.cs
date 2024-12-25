@@ -15,8 +15,8 @@ public class HRDirectorBackground(
             await Task.Delay(TimeSpan.FromSeconds(_options.Value.BackgrondWaitInterval), cancellationToken);
 
             var groupedTeams = _context.Teams.GroupBy(t => t.HackatonId)
-                        .Select(g => g.ToList())
-                        .ToList();
+                                            .Select(g => g.ToList())
+                                            .ToList();
 
             foreach(var teams in groupedTeams) 
             {

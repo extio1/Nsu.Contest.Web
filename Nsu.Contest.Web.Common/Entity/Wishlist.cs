@@ -15,4 +15,5 @@ public class Wishlist
     public Employee ForEmployee { get; set; }
     public int ForEmployeeId { get; set; }
     public ICollection<int> DesiredEmployees { get; set; }
+    public string EmployeeType;
 };

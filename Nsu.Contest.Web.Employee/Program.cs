@@ -6,6 +6,7 @@ using Polly;
 using Polly.Extensions.Http;
 
 using MassTransit;
+using Nsu.Contest.Web.Common.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,36 +20,30 @@ builder.Services.AddRefitClient<IHRManagerClient>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://hrmanager"))
     .AddPolicyHandler(GetRetryPolicy(builder));
 
-builder.Services.AddHostedService<EmployeeConsumer>();
 builder.Services.AddLogging();
-
-var app = builder.Build();
-app.Run();
-
-var employeeType = Environment.GetEnvironmentVariable("EMPLOYEEOPTIONS__EMPLOYEETYPE") ?? "Unknown";
-var employeeId = Environment.GetEnvironmentVariable("EMPLOYEEOPTIONS__EMPLOYEEID") ?? "Unknown";
-
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<ContestStartConsumer>();
-
     x.UsingRabbitMq((context, cfg) =>
     {
-        cfg.Host("rabbitmq://rabbitmq", h =>
+        cfg.Host("rabbitmq://localhost", h =>
         {
             h.Username("guest");
             h.Password("guest");
         });
-
-        cfg.ReceiveEndpoint($"hackathon-started-queue-{employeeType}-{employeeId}", e =>
-        {
-            e.ConfigureConsumer<ContestStartConsumer>(context);
-        });
-
-        cfg.ConfigureEndpoints(context);
     });
 });
 
+
+var app = builder.Build();
+
+app.MapPost("/publish-wishlist", async (IPublishEndpoint publishEndpoint, WishilistMessage message) =>
+{
+    await publishEndpoint.Publish(message);
+    return Results.Ok();
+});
+
+app.Run();
 
 static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy(IHostApplicationBuilder builder)
 {
