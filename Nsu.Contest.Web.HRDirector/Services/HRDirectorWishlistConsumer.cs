@@ -4,7 +4,7 @@ using MassTransit;
 using Nsu.Contest.Web.Common.Messages;
 using Nsu.Contest.Web.HRDirector.Model.Data;
 
-public class HRDirectorTeamConsumer(HRDirectorDbContext _context) : IConsumer<WishilistMessage>
+public class HRDirectorWishlistConsumer(HRDirectorDbContext _context) : IConsumer<WishilistMessage>
 {
     public async Task Consume(ConsumeContext<WishilistMessage> context)
     {

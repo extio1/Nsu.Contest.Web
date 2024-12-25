@@ -41,7 +41,7 @@ public class HRManagerBackgrond(
                     .ToList();
 
                 var teams = _manager.BuildTeams(teamleads, juniors, wishlistTeamleads, wishlistJuniors);
-                await _client.SubmitData(new HRDirectorRequest(wishlistJuniors, wishlistTeamleads, teams));
+                await _client.SubmitData(new HRDirectorRequest(teams));
                 return;
             }
         }

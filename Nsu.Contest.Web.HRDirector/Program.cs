@@ -16,6 +16,11 @@ builder.Services.AddDbContext<HRDirectorDbContext>(
     }
 );
 
+builder.Services.Configure<HRDirectorConfig>(
+    builder.Configuration.GetSection("HRDirectorConfig"));
+
+builder.Services.AddHostedService<HRDirectorProducer>();
+builder.Services.AddHostedService<HRDirectorBackground>();
 builder.Services.AddScoped<IHRDirectorService, HRDirectorService>();
 builder.Services.AddScoped<ITeamEstimatingStrategy, HarmonicMean>();
 builder.Services.AddScoped<Director>();
@@ -23,7 +28,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddMassTransit(x =>
 {
-    x.AddConsumer<HRDirectorTeamConsumer>();
+    x.AddConsumer<HRDirectorWishlistConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {

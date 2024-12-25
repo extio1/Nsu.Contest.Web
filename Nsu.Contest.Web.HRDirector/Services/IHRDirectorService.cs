@@ -4,9 +4,7 @@ using Nsu.Contest.Web.Common.Entity;
 
 public interface IHRDirectorService
 {
-    public void HandleWishlistsTeams(
-        IEnumerable<Wishlist> juniorWishlists, 
-        IEnumerable<Wishlist> teamleadWishlists, 
+    public void HandleTeams(
         IEnumerable<Team> teams
     );
 }

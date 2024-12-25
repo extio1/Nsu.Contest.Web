@@ -9,6 +9,7 @@ using Nsu.Contest.Web.HRManager.Services;
 using Refit;
 using Polly;
 using Polly.Extensions.Http;
+using HrManager.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseUrls("http://0.0.0.0:80");
@@ -24,6 +25,7 @@ builder.Services.AddRefitClient<IHRDirectorClient>()
 builder.Services.Configure<HRManagerConfig>(
     builder.Configuration.GetSection("HRManagerConfig"));
 
+builder.Services.AddHostedService<HRManagerBackgrond>();
 builder.Services.AddScoped<ITeamBuildingStrategy, RandomTeamBuildingStrategy>();
 builder.Services.AddScoped<IHRManagerService, HRManagerService>();
 builder.Services.AddScoped<Manager>();

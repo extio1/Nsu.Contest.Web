@@ -7,7 +7,7 @@ public class WishlistGenerator : IWishlistGenerator
     public WishlistGenerator()
     {}
 
-    public IEnumerable<Wishlist> GenerateWishlists(IEnumerable<Employee> forEmpls, IEnumerable<Employee> ofEmpls)
+    public IEnumerable<Wishlist> GenerateWishlists(Guid hackatonId, IEnumerable<Employee> forEmpls, IEnumerable<Employee> ofEmpls)
     {
         if(forEmpls.Count() != ofEmpls.Count())
         {
@@ -24,6 +24,7 @@ public class WishlistGenerator : IWishlistGenerator
             (
                 new Wishlist
                 (
+                    hackatonId,
                     forEmpl, 
                     prioritiesForEmpl.Select(ind => ofEmpls.ElementAt(ind-1)).ToArray().Select(e => e.Id).ToArray()
                 )
@@ -33,9 +34,9 @@ public class WishlistGenerator : IWishlistGenerator
         return wishlists;
     }
 
-    public static Wishlist GenerateWishlist(Employee forEmpl, IEnumerable<Employee> ofEmpls)
+    public static Wishlist GenerateWishlist(Guid hackatonId, Employee forEmpl, IEnumerable<Employee> ofEmpls)
     {
         var prioritiesForEmpl = RandomGenerator.GeneratePermutation(ofEmpls.Count());
-        return new Wishlist(forEmpl, prioritiesForEmpl);
+        return new Wishlist(hackatonId, forEmpl, prioritiesForEmpl);
     }
 }
