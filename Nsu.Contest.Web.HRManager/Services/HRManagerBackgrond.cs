@@ -27,22 +27,25 @@ public class HRManagerBackgrond(
         {
             await Task.Delay(TimeSpan.FromSeconds(_options.Value.SenderInterval), cancellationToken);
 
-            var juniors = _context.Juniors.ToList();
-            var teamleads = _context.Teamleads.ToList();
+            var wishlistGroups = _context.Wishlists.GroupBy(w => w.HackatonId).ToList();
 
-            if (juniors.Count   == _options.Value.NumberOfTeams &&
-                teamleads.Count == _options.Value.NumberOfTeams)
+            foreach (var group in wishlistGroups)
             {
-                var wishlistTeamleads = _context.Wishlists
-                    .Where(w => teamleads.Contains(w.ForEmployee))
-                    .ToList();
-                var wishlistJuniors = _context.Wishlists
-                    .Where(w => juniors.Contains(w.ForEmployee))
-                    .ToList();
-
-                var teams = _manager.BuildTeams(teamleads, juniors, wishlistTeamleads, wishlistJuniors);
-                await _client.SubmitData(new HRDirectorRequest(teams));
-                return;
+                var wishlists = group.ToList();
+                if(wishlists.Count == _options.Value.NumberOfTeams*2)
+                {
+                    var juniors = wishlists.Where(w => w.EmployeeType == "junior").Select(w => (Junior)w.ForEmployee);
+                    var teamleads = wishlists.Where(w => w.EmployeeType == "teamlead").Select(w => (Teamlead)w.ForEmployee);
+                    var wishlistTeamleads = _context.Wishlists
+                        .Where(w => teamleads.Contains(w.ForEmployee))
+                        .ToList();
+                    var wishlistJuniors = _context.Wishlists
+                        .Where(w => juniors.Contains(w.ForEmployee))
+                        .ToList();
+                    
+                    var teams = _manager.BuildTeams(teamleads, juniors, wishlistTeamleads, wishlistJuniors);
+                    await _client.SubmitData(new HRDirectorRequest(teams));
+                }
             }
         }
     }

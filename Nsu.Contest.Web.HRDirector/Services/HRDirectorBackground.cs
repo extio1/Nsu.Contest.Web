@@ -30,6 +30,7 @@ public class HRDirectorBackground(
                 
                     var score = _director.EstimateTeams(juniorWishlists, teamleadWishlists, teams);
 
+                    _context.Contests.Add(new Common.Entity.Contest(teams[0].HackatonId, score));
                     _context.Teams.RemoveRange(teams);
                     _context.Wishlists.RemoveRange(juniorWishlists);
                     _context.Wishlists.RemoveRange(teamleadWishlists);
